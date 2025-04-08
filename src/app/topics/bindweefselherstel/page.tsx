@@ -654,10 +654,10 @@ export default function BindweefselHerstel() {
               <div className="mt-8 p-6 bg-gray-50 rounded-lg">
                 <h4 className="text-lg font-semibold mb-3">Voorgestelde Gespreksstarters:</h4>
                 <ul className="list-disc list-inside space-y-2 text-gray-700">
-                  <li>"Wat zijn de belangrijkste factoren die de snelheid van bindweefselherstel beïnvloeden?"</li>
-                  <li>"Hoe kan ik bepalen of een weefsel klaar is voor progressieve belasting?"</li>
-                  <li>"Wat is de rol van mechanotransductie in het herstelproces?"</li>
-                  <li>"Welke signalen geven aan dat het weefsel overbelast wordt?"</li>
+                  <li>&quot;Wat zijn de belangrijkste factoren die de snelheid van bindweefselherstel beïnvloeden?&quot;</li>
+                  <li>&quot;Hoe kan ik bepalen of een weefsel klaar is voor progressieve belasting?&quot;</li>
+                  <li>&quot;Wat is de rol van mechanotransductie in het herstelproces?&quot;</li>
+                  <li>&quot;Welke signalen geven aan dat het weefsel overbelast wordt?&quot;</li>
                 </ul>
               </div>
             </div>
