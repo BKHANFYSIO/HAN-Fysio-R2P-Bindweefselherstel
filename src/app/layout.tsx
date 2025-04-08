@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Return-2-Performance',
-  description: 'Een educatieve module over bindweefselherstel',
+  description: 'Leer over het herstelproces van bindweefsel en de factoren die hierbij een rol spelen.',
 }
 
 export default function RootLayout({
