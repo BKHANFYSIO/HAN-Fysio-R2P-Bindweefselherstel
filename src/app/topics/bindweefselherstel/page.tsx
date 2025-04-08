@@ -175,39 +175,20 @@ export default function BindweefselHerstel() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [canFlip, setCanFlip] = useState(false);
   const [showFlipWarning, setShowFlipWarning] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(3);
+  const [lastFlipTime, setLastFlipTime] = useState<number | null>(null);
   const [userExplanation, setUserExplanation] = useState('');
   const [feedback, setFeedback] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Reset timer when changing cards
-  useEffect(() => {
-    setCanFlip(false);
-    setTimeLeft(3);
-    setIsFlipped(false);
-    
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          setCanFlip(true);
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [currentCard]);
-
   const handleFlipCard = () => {
-    if (!canFlip) {
+    const now = Date.now();
+    if (lastFlipTime && now - lastFlipTime < 3000) {
       setShowFlipWarning(true);
       setTimeout(() => setShowFlipWarning(false), 3000);
       return;
     }
+    setLastFlipTime(now);
     setIsFlipped(!isFlipped);
   };
 
@@ -431,37 +412,32 @@ export default function BindweefselHerstel() {
           <div className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg">
             <h2 className="text-2xl font-bold mb-8">{t('levels.practice')}</h2>
             
-            {/* Timer and warning message */}
-            <div className="mb-4 text-center">
-              {!canFlip && (
-                <div className="text-gray-600 font-medium">
-                  {t('flashcards.waitMessage').replace('{seconds}', timeLeft.toString())}
-                </div>
-              )}
-              {showFlipWarning && (
-                <div className="bg-amber-100 border border-amber-200 text-amber-800 px-4 py-2 rounded-lg mt-2">
-                  {t('flashcards.warningMessage')}
-                  <br />
-                  {t('flashcards.learningTip')}
-                </div>
-              )}
-            </div>
+            {/* Warning message */}
+            {showFlipWarning && (
+              <div className="mb-4 bg-amber-100 border border-amber-200 text-amber-800 px-4 py-2 rounded-lg">
+                {t('flashcards.warningMessage')}
+                <br />
+                {t('flashcards.learningTip')}
+              </div>
+            )}
 
-            <div className="relative h-96 perspective-1000">
+            <div
+              className="relative w-full h-64 perspective-1000"
+              onClick={handleFlipCard}
+            >
               <div
-                className={`relative w-full h-full transition-transform duration-700 transform-style-preserve-3d cursor-pointer ${
-                  isFlipped ? 'rotate-y-180' : ''
+                className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] ${
+                  isFlipped ? '[transform:rotateY(180deg)]' : ''
                 }`}
-                onClick={handleFlipCard}
               >
                 {/* Front of card */}
-                <div className="absolute w-full h-full backface-hidden">
+                <div className="absolute w-full h-full [backface-visibility:hidden]">
                   <div className="bg-gray-50 rounded-lg p-8 h-full flex items-center justify-center text-center shadow-md">
                     <p className="text-xl font-medium text-gray-800">{flashcards[currentCard].front}</p>
                   </div>
                 </div>
                 {/* Back of card */}
-                <div className="absolute w-full h-full backface-hidden rotate-y-180">
+                <div className="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]">
                   <div className="bg-[#e6007e] text-white rounded-lg p-8 h-full flex items-center justify-center text-center shadow-md">
                     <p className="text-xl">{flashcards[currentCard].back}</p>
                   </div>
@@ -469,11 +445,13 @@ export default function BindweefselHerstel() {
               </div>
             </div>
 
-            <div className="flex justify-between items-center mt-8">
+            <div className="flex items-center justify-between mt-8">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setCurrentCard((prev) => (prev === 0 ? flashcards.length - 1 : prev - 1));
+                  setIsFlipped(false);
+                  setLastFlipTime(null);
                 }}
                 className="px-6 py-3 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors"
               >
@@ -486,6 +464,8 @@ export default function BindweefselHerstel() {
                 onClick={(e) => {
                   e.stopPropagation();
                   setCurrentCard((prev) => (prev === flashcards.length - 1 ? 0 : prev + 1));
+                  setIsFlipped(false);
+                  setLastFlipTime(null);
                 }}
                 className="px-6 py-3 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors"
               >
