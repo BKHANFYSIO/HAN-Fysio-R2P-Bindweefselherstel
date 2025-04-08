@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 interface FlashCard {
@@ -173,9 +173,41 @@ export default function BindweefselHerstel() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [canFlip, setCanFlip] = useState(false);
+  const [showFlipWarning, setShowFlipWarning] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(3);
   const [userExplanation, setUserExplanation] = useState('');
   const [feedback, setFeedback] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Reset timer when changing cards
+  useEffect(() => {
+    setCanFlip(false);
+    setTimeLeft(3);
+    setIsFlipped(false);
+    
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          setCanFlip(true);
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [currentCard]);
+
+  const handleFlipCard = () => {
+    if (!canFlip) {
+      setShowFlipWarning(true);
+      setTimeout(() => setShowFlipWarning(false), 3000);
+      return;
+    }
+    setIsFlipped(!isFlipped);
+  };
 
   const checkAnswer = async () => {
     if (!userExplanation.trim()) {
@@ -234,8 +266,7 @@ export default function BindweefselHerstel() {
             { level: 1, title: "Informatie & Bronnen" },
             { level: 2, title: "Begrippen Oefenen" },
             { level: 3, title: "Inzicht Toetsen" },
-            { level: 4, title: "Praktijkcasussen" },
-            { level: 5, title: "AI Leerhulp" }
+            { level: 4, title: "Praktijkcasussen" }
           ].map((item) => (
             <button
               key={item.level}
@@ -396,46 +427,61 @@ export default function BindweefselHerstel() {
         {currentLevel === 2 && (
           <div className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg">
             <h2 className="text-2xl font-bold mb-8">Flashcards</h2>
+            
+            {/* Timer and warning message */}
+            <div className="mb-4 text-center">
+              {!canFlip && (
+                <div className="text-gray-600 font-medium">
+                  Wacht nog {timeLeft} seconden voordat je de kaart omdraait...
+                </div>
+              )}
+              {showFlipWarning && (
+                <div className="bg-amber-100 border border-amber-200 text-amber-800 px-4 py-2 rounded-lg mt-2">
+                  Probeer eerst zelf het antwoord te herinneren! Dit helpt je om de informatie beter te onthouden.
+                  Het aanleggen van nieuwe verbindingen in je geheugen kost wat meer moeite, maar leidt tot beter en langduriger leren.
+                </div>
+              )}
+            </div>
+
             <div className="relative h-96 perspective-1000">
               <div
                 className={`relative w-full h-full transition-transform duration-700 transform-style-preserve-3d cursor-pointer ${
                   isFlipped ? 'rotate-y-180' : ''
                 }`}
-                onClick={() => setIsFlipped(!isFlipped)}
+                onClick={handleFlipCard}
               >
                 {/* Front of card */}
                 <div className="absolute w-full h-full backface-hidden">
-                  <div className="bg-gray-50 rounded-lg p-6 h-full flex items-center justify-center text-center shadow-md">
-                    <p className="text-xl font-medium">{flashcards[currentCard].front}</p>
+                  <div className="bg-gray-50 rounded-lg p-8 h-full flex items-center justify-center text-center shadow-md">
+                    <p className="text-xl font-medium text-gray-800">{flashcards[currentCard].front}</p>
                   </div>
                 </div>
                 {/* Back of card */}
                 <div className="absolute w-full h-full backface-hidden rotate-y-180">
-                  <div className="bg-[#e6007e] text-white rounded-lg p-6 h-full flex items-center justify-center text-center shadow-md">
+                  <div className="bg-[#e6007e] text-white rounded-lg p-8 h-full flex items-center justify-center text-center shadow-md">
                     <p className="text-xl">{flashcards[currentCard].back}</p>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="flex justify-between mt-8">
+
+            <div className="flex justify-between items-center mt-8">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setCurrentCard((prev) => (prev === 0 ? flashcards.length - 1 : prev - 1));
-                  setIsFlipped(false);
                 }}
                 className="px-6 py-3 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors"
               >
                 ← Vorige
               </button>
-              <span className="self-center text-gray-500">
+              <span className="text-gray-600 font-medium">
                 {currentCard + 1} / {flashcards.length}
               </span>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setCurrentCard((prev) => (prev === flashcards.length - 1 ? 0 : prev + 1));
-                  setIsFlipped(false);
                 }}
                 className="px-6 py-3 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors"
               >
@@ -448,15 +494,15 @@ export default function BindweefselHerstel() {
         {/* Level 3 - Explanation Exercise */}
         {currentLevel === 3 && (
           <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-lg">
-            <h2 className="text-2xl font-bold mb-8">Uitleg Oefening</h2>
+            <h2 className="text-2xl font-bold mb-8 text-gray-900">Uitleg Oefening</h2>
             <div className="space-y-6">
               <div className="bg-gray-50 p-6 rounded-lg">
                 <h3 className="text-xl font-semibold mb-4 text-gray-900">
                   Beantwoord de volgende vraag:
                 </h3>
                 <div className="p-4 border border-gray-200 rounded-lg bg-white">
-                  <p className="font-semibold">{questions[currentQuestion].title}</p>
-                  <p className="text-sm mt-2 text-gray-700">
+                  <p className="font-semibold text-gray-900">{questions[currentQuestion].title}</p>
+                  <p className="text-base mt-2 text-gray-700">
                     {questions[currentQuestion].description}
                   </p>
                 </div>
@@ -610,61 +656,6 @@ export default function BindweefselHerstel() {
                     </div>
                   </div>
                 )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Level 5 - AI Chat Options */}
-        {currentLevel === 5 && (
-          <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-lg">
-            <h2 className="text-2xl font-bold mb-8">AI Leerhulp</h2>
-            <div className="space-y-6">
-              <div className="bg-gray-50 p-6 rounded-lg">
-                <h3 className="text-xl font-semibold mb-4">Kies je AI Assistent</h3>
-                <p className="text-gray-700 mb-6">
-                  Kies een van de onderstaande AI assistenten om meer te leren over bindweefselherstel. 
-                  De assistenten zullen je helpen door middel van de Socratische methode - ze stellen vragen 
-                  die je helpen zelf tot inzichten te komen.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <a 
-                  href="https://chat.openai.com/share/your-chatgpt-link" 
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block p-6 bg-[#74AA9C] text-white rounded-lg hover:bg-opacity-90 transition-all transform hover:-translate-y-1"
-                >
-                  <h4 className="text-xl font-semibold mb-2">ChatGPT</h4>
-                  <p className="mb-4">Start een gesprek met ChatGPT over bindweefselherstel</p>
-                  <div className="text-sm opacity-75">
-                    Vooraf ingestelde prompt voor optimaal leereffect
-                  </div>
-                </a>
-
-                <a 
-                  href="https://claude.ai/chat" 
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block p-6 bg-[#6B4F9E] text-white rounded-lg hover:bg-opacity-90 transition-all transform hover:-translate-y-1"
-                >
-                  <h4 className="text-xl font-semibold mb-2">Claude</h4>
-                  <p className="mb-4">Start een gesprek met Claude over bindweefselherstel</p>
-                  <div className="text-sm opacity-75">
-                    Vooraf ingestelde prompt voor optimaal leereffect
-                  </div>
-                </a>
-              </div>
-
-              <div className="mt-8 p-6 bg-gray-50 rounded-lg">
-                <h4 className="text-lg font-semibold mb-3">Voorgestelde Gespreksstarters:</h4>
-                <ul className="list-disc list-inside space-y-2 text-gray-700">
-                  <li>&quot;Wat zijn de belangrijkste factoren die de snelheid van bindweefselherstel beïnvloeden?&quot;</li>
-                  <li>&quot;Hoe kan ik bepalen of een weefsel klaar is voor progressieve belasting?&quot;</li>
-                  <li>&quot;Wat is de rol van mechanotransductie in het herstelproces?&quot;</li>
-                  <li>&quot;Welke signalen geven aan dat het weefsel overbelast wordt?&quot;</li>
-                </ul>
               </div>
             </div>
           </div>

@@ -91,15 +91,12 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/30" />
         <div className="relative z-10 h-full flex flex-col justify-center items-center p-8 text-center">
           <h1 className="text-5xl md:text-7xl font-bold mb-4">
-            Bindweefselherstel
+            Return-2-Performance
           </h1>
           <p className="text-2xl md:text-3xl font-light mb-8 max-w-3xl">
             Verdiep je kennis in het herstelproces van bindweefsel en de factoren die hierbij een rol spelen
           </p>
           <div className="flex flex-col items-center space-y-4">
-            <button className="bg-white text-[#e6007e] px-8 py-3 rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors">
-              Start je leerreis
-            </button>
             <span className="text-sm text-gray-200">
               Een module van HAN Fysiotherapie
             </span>
