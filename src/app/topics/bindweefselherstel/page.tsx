@@ -4,6 +4,12 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '../../contexts/LanguageContext';
 
+// Type for translation function
+type TranslationFunction = {
+  (key: string): string;
+  <T>(key: string, options: { returnObjects: true }): T;
+};
+
 interface Question {
   title: string;
   description: string;
@@ -79,7 +85,7 @@ const caseStudies: CaseStudy[] = [
 ];
 
 export default function BindweefselHerstel() {
-  const { t } = useLanguage();
+  const { t } = useLanguage() as { t: TranslationFunction };
   const [currentLevel, setCurrentLevel] = useState(1);
   const [currentCard, setCurrentCard] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -95,6 +101,11 @@ export default function BindweefselHerstel() {
 
   // Array of flashcard keys
   const flashcardKeys = ['collagen', 'fibroblasts'];
+
+  // Helper function to get array translations
+  const getArrayTranslation = <T,>(key: string): T[] => {
+    return t(key, { returnObjects: true }) as T[];
+  };
 
   const handleFlipCard = () => {
     const now = Date.now();
@@ -200,7 +211,7 @@ export default function BindweefselHerstel() {
                     <div className="font-normal ml-6 mt-2 space-y-2">
                       <p className="mb-2">{t('contentSections.phases.inflammatory.description')}</p>
                       <ul className="list-disc ml-4 space-y-1">
-                        {t('contentSections.phases.inflammatory.points', { returnObjects: true }).map((point, index) => (
+                        {getArrayTranslation<string>('contentSections.phases.inflammatory.points').map((point, index) => (
                           <li key={index}>{point}</li>
                         ))}
                       </ul>
@@ -213,7 +224,7 @@ export default function BindweefselHerstel() {
                     <div className="font-normal ml-6 mt-2 space-y-2">
                       <p className="mb-2">{t('contentSections.phases.proliferative.description')}</p>
                       <ul className="list-disc ml-4 space-y-1">
-                        {t('contentSections.phases.proliferative.points', { returnObjects: true }).map((point, index) => (
+                        {getArrayTranslation<string>('contentSections.phases.proliferative.points').map((point, index) => (
                           <li key={index}>{point}</li>
                         ))}
                       </ul>
@@ -226,7 +237,7 @@ export default function BindweefselHerstel() {
                     <div className="font-normal ml-6 mt-2 space-y-2">
                       <p className="mb-2">{t('contentSections.phases.remodeling.description')}</p>
                       <ul className="list-disc ml-4 space-y-1">
-                        {t('contentSections.phases.remodeling.points', { returnObjects: true }).map((point, index) => (
+                        {getArrayTranslation<string>('contentSections.phases.remodeling.points').map((point, index) => (
                           <li key={index}>{point}</li>
                         ))}
                       </ul>
@@ -242,7 +253,7 @@ export default function BindweefselHerstel() {
                 <h3 className="text-xl font-semibold mb-4">{t('contentSections.mechanotransduction.title')}</h3>
                 <p className="mb-4">{t('contentSections.mechanotransduction.description')}</p>
                 <ul className="list-disc ml-6 space-y-2">
-                  {t('contentSections.mechanotransduction.points', { returnObjects: true }).map((point, index) => (
+                  {getArrayTranslation<{title: string; description: string}>('contentSections.mechanotransduction.points').map((point, index) => (
                     <li key={index}>
                       <span className="font-semibold">{point.title}:</span> {point.description}
                     </li>
@@ -255,7 +266,7 @@ export default function BindweefselHerstel() {
                 <div className="space-y-4">
                   <p className="mb-4">{t('contentSections.clinicalImplications.description')}</p>
                   <ul className="list-disc ml-6 space-y-2">
-                    {t('contentSections.clinicalImplications.phases', { returnObjects: true }).map((phase, index) => (
+                    {getArrayTranslation<{title: string; description: string}>('contentSections.clinicalImplications.phases').map((phase, index) => (
                       <li key={index}>
                         <span className="font-semibold">{phase.title}:</span> {phase.description}
                       </li>
@@ -384,10 +395,10 @@ export default function BindweefselHerstel() {
                 </h3>
                 <div className="p-4 border border-gray-200 rounded-lg bg-white">
                   <p className="font-semibold text-gray-900">
-                    {t('questions.list', { returnObjects: true })[currentQuestion].title}
+                    {getArrayTranslation<Question>('questions.list')[currentQuestion].title}
                   </p>
                   <p className="text-base mt-2 text-gray-700">
-                    {t('questions.list', { returnObjects: true })[currentQuestion].description}
+                    {getArrayTranslation<Question>('questions.list')[currentQuestion].description}
                   </p>
                 </div>
               </div>
@@ -402,7 +413,8 @@ export default function BindweefselHerstel() {
                 <div className="flex justify-between items-center">
                   <button
                     onClick={() => {
-                      setCurrentQuestion((prev) => (prev === 0 ? t('questions.list', { returnObjects: true }).length - 1 : prev - 1));
+                      const questions = getArrayTranslation<Question>('questions.list');
+                      setCurrentQuestion((prev) => (prev === 0 ? questions.length - 1 : prev - 1));
                       setUserExplanation('');
                       setFeedback('');
                     }}
@@ -411,11 +423,12 @@ export default function BindweefselHerstel() {
                     {t('previous')}
                   </button>
                   <span className="text-gray-500">
-                    {currentQuestion + 1} / {t('questions.list', { returnObjects: true }).length}
+                    {currentQuestion + 1} / {getArrayTranslation<Question>('questions.list').length}
                   </span>
                   <button
                     onClick={() => {
-                      setCurrentQuestion((prev) => (prev === t('questions.list', { returnObjects: true }).length - 1 ? 0 : prev + 1));
+                      const questions = getArrayTranslation<Question>('questions.list');
+                      setCurrentQuestion((prev) => (prev === questions.length - 1 ? 0 : prev + 1));
                       setUserExplanation('');
                       setFeedback('');
                     }}
