@@ -230,17 +230,23 @@ export default function BindweefselHerstel() {
       {/* Level Selection */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex space-x-4 mb-8">
-          {[1, 2, 3, 4, 5].map((level) => (
+          {[
+            { level: 1, title: "Informatie & Bronnen" },
+            { level: 2, title: "Begrippen Oefenen" },
+            { level: 3, title: "Inzicht Toetsen" },
+            { level: 4, title: "Praktijkcasussen" },
+            { level: 5, title: "AI Leerhulp" }
+          ].map((item) => (
             <button
-              key={level}
-              onClick={() => setCurrentLevel(level)}
+              key={item.level}
+              onClick={() => setCurrentLevel(item.level)}
               className={`px-6 py-3 rounded-full ${
-                currentLevel === level
+                currentLevel === item.level
                   ? 'bg-[#e6007e] text-white'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
-              Level {level}
+              {item.title}
             </button>
           ))}
         </div>

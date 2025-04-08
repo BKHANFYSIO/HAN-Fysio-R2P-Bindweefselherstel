@@ -90,15 +90,20 @@ export default function Home() {
       <div className="relative h-[60vh] bg-gradient-to-r from-[#e6007e] to-[#cc0066] text-white">
         <div className="absolute inset-0 bg-black/30" />
         <div className="relative z-10 h-full flex flex-col justify-center items-center p-8 text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6">
-            Ontdek & Leer
+          <h1 className="text-5xl md:text-7xl font-bold mb-4">
+            Bindweefselherstel
           </h1>
-          <p className="text-xl md:text-2xl max-w-2xl mb-8">
-            Verdiep je kennis in sport, gezondheid en beweging met onze interactieve leermodules
+          <p className="text-2xl md:text-3xl font-light mb-8 max-w-3xl">
+            Verdiep je kennis in het herstelproces van bindweefsel en de factoren die hierbij een rol spelen
           </p>
-          <button className="bg-white text-[#e6007e] px-8 py-3 rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors">
-            Start je leerreis
-          </button>
+          <div className="flex flex-col items-center space-y-4">
+            <button className="bg-white text-[#e6007e] px-8 py-3 rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors">
+              Start je leerreis
+            </button>
+            <span className="text-sm text-gray-200">
+              Een module van HAN Fysiotherapie
+            </span>
+          </div>
         </div>
       </div>
 
@@ -107,17 +112,36 @@ export default function Home() {
         <h2 className="text-3xl font-bold text-center mb-12">Beschikbare Onderwerpen</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {learningTopics.map((topic, index) => (
-            <Link href={`/topics/${topic.title.toLowerCase().replace(/ /g, '-')}`} key={index}>
-              <div className="group bg-white border rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                <div className="text-4xl mb-4">{topic.icon}</div>
-                <h3 className="text-xl font-semibold mb-2 text-[#e6007e] group-hover:text-[#cc0066]">
-                  {topic.title}
-                </h3>
-                <p className="text-gray-600">
-                  {topic.description}
-                </p>
+            topic.title === "Bindweefselherstel" ? (
+              <Link href={`/topics/${topic.title.toLowerCase().replace(/ /g, '-')}`} key={index}>
+                <div className="group bg-white border rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                  <div className="text-4xl mb-4">{topic.icon}</div>
+                  <h3 className="text-xl font-semibold mb-2 text-[#e6007e] group-hover:text-[#cc0066]">
+                    {topic.title}
+                  </h3>
+                  <p className="text-gray-600">
+                    {topic.description}
+                  </p>
+                </div>
+              </Link>
+            ) : (
+              <div key={index} className="group relative">
+                <div className="bg-white border rounded-xl p-6 opacity-50">
+                  <div className="text-4xl mb-4 text-gray-400">{topic.icon}</div>
+                  <h3 className="text-xl font-normal mb-2 text-gray-400">
+                    {topic.title}
+                  </h3>
+                  <p className="text-gray-400">
+                    {topic.description}
+                  </p>
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/5 rounded-xl">
+                  <span className="bg-gray-800 text-white px-4 py-2 rounded-full text-sm">
+                    Binnenkort beschikbaar
+                  </span>
+                </div>
               </div>
-            </Link>
+            )
           ))}
         </div>
       </div>
