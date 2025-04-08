@@ -1,46 +1,124 @@
 import Link from "next/link";
 
 export default function Home() {
+  const learningTopics = [
+    {
+      title: "Bindweefselherstel",
+      description: "Leer over het herstelproces van bindweefsel en de factoren die hierbij een rol spelen.",
+      icon: "🔬"
+    },
+    {
+      title: "Trainingsleer Principes",
+      description: "Ontdek de fundamentele principes van effectieve training en periodisering.",
+      icon: "💪"
+    },
+    {
+      title: "Anatomie & Fysiologie",
+      description: "Verdiep je in de structuur en werking van het menselijk lichaam.",
+      icon: "🫀"
+    },
+    {
+      title: "Biomechanica",
+      description: "Begrijp de mechanische principes van menselijke beweging.",
+      icon: "⚡"
+    },
+    {
+      title: "Sportvoeding",
+      description: "Leer over optimale voeding voor sportprestaties en herstel.",
+      icon: "🥗"
+    },
+    {
+      title: "Blessurepreventie",
+      description: "Ontdek strategieën om sportblessures te voorkomen.",
+      icon: "🏥"
+    },
+    {
+      title: "Motorisch Leren",
+      description: "Begrijp hoe bewegingsvaardigheden worden aangeleerd en verbeterd.",
+      icon: "🧠"
+    },
+    {
+      title: "Sportpsychologie",
+      description: "Verken de mentale aspecten van sport en prestatie.",
+      icon: "🎯"
+    },
+    {
+      title: "Revalidatie Technieken",
+      description: "Leer over moderne methoden van sportrevalidatie.",
+      icon: "⚕️"
+    },
+    {
+      title: "Krachttraining",
+      description: "Ontdek principes en technieken van effectieve krachttraining.",
+      icon: "🏋️"
+    },
+    {
+      title: "Conditietraining",
+      description: "Leer over verschillende methoden van conditieverbetering.",
+      icon: "🏃"
+    },
+    {
+      title: "Sportmassage",
+      description: "Verdiep je in technieken en effecten van sportmassage.",
+      icon: "✋"
+    },
+    {
+      title: "Bewegingsanalyse",
+      description: "Leer bewegingspatronen analyseren en optimaliseren.",
+      icon: "📊"
+    },
+    {
+      title: "Sporttaping",
+      description: "Ontdek verschillende tape-technieken voor sport en herstel.",
+      icon: "🎯"
+    },
+    {
+      title: "Sportspecifieke Training",
+      description: "Leer over trainingsmethoden voor verschillende sporten.",
+      icon: "🎾"
+    },
+    {
+      title: "Voedingssupplementen",
+      description: "Begrijp de rol en werking van verschillende supplementen.",
+      icon: "💊"
+    }
+  ];
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-8">
-      <div>
-        <h2 className="text-2xl font-semibold text-center border p-4 font-mono rounded-md">
-          Get started by choosing a template path from the /paths/ folder.
-        </h2>
+    <main className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <div className="relative h-[60vh] bg-gradient-to-r from-[#e6007e] to-[#cc0066] text-white">
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="relative z-10 h-full flex flex-col justify-center items-center p-8 text-center">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6">
+            Ontdek & Leer
+          </h1>
+          <p className="text-xl md:text-2xl max-w-2xl mb-8">
+            Verdiep je kennis in sport, gezondheid en beweging met onze interactieve leermodules
+          </p>
+          <button className="bg-white text-[#e6007e] px-8 py-3 rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors">
+            Start je leerreis
+          </button>
+        </div>
       </div>
-      <div>
-        <h1 className="text-6xl font-bold text-center">Make anything you imagine 🪄</h1>
-        <h2 className="text-2xl text-center font-light text-gray-500 pt-4">
-          This whole page will be replaced when you run your template path.
-        </h2>
-      </div>
-      <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="border rounded-lg p-6 hover:bg-gray-100 transition-colors">
-          <h3 className="text-xl font-semibold">AI Chat App</h3>
-          <p className="mt-2 text-sm text-gray-600">
-            An intelligent conversational app powered by AI models, featuring real-time responses
-            and seamless integration with Next.js and various AI providers.
-          </p>
-        </div>
-        <div className="border rounded-lg p-6 hover:bg-gray-100 transition-colors">
-          <h3 className="text-xl font-semibold">AI Image Generation App</h3>
-          <p className="mt-2 text-sm text-gray-600">
-            Create images from text prompts using AI, powered by the Replicate API and Next.js.
-          </p>
-        </div>
-        <div className="border rounded-lg p-6 hover:bg-gray-100 transition-colors">
-          <h3 className="text-xl font-semibold">Social Media App</h3>
-          <p className="mt-2 text-sm text-gray-600">
-            A feature-rich social platform with user profiles, posts, and interactions using
-            Firebase and Next.js.
-          </p>
-        </div>
-        <div className="border rounded-lg p-6 hover:bg-gray-100 transition-colors">
-          <h3 className="text-xl font-semibold">Voice Notes App</h3>
-          <p className="mt-2 text-sm text-gray-600">
-            A voice-based note-taking app with real-time transcription using Deepgram API, 
-            Firebase integration for storage, and a clean, simple interface built with Next.js.
-          </p>
+
+      {/* Topics Grid */}
+      <div className="max-w-7xl mx-auto px-4 py-16">
+        <h2 className="text-3xl font-bold text-center mb-12">Beschikbare Onderwerpen</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {learningTopics.map((topic, index) => (
+            <Link href={`/topics/${topic.title.toLowerCase().replace(/ /g, '-')}`} key={index}>
+              <div className="group bg-white border rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                <div className="text-4xl mb-4">{topic.icon}</div>
+                <h3 className="text-xl font-semibold mb-2 text-[#e6007e] group-hover:text-[#cc0066]">
+                  {topic.title}
+                </h3>
+                <p className="text-gray-600">
+                  {topic.description}
+                </p>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </main>
