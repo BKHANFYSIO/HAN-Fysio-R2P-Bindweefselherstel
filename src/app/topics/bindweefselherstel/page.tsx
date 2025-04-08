@@ -1,13 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '../../contexts/LanguageContext';
-
-interface FlashCard {
-  front: string;
-  back: string;
-}
 
 interface Question {
   title: string;
@@ -21,89 +16,6 @@ interface CaseStudy {
   correctAnswer: number;
   explanation: string;
 }
-
-const flashcards: FlashCard[] = [
-  {
-    front: "Wat is collageen?",
-    back: "Een structureel eiwit dat de belangrijkste component is van bindweefsel en zorgt voor sterkte en elasticiteit"
-  },
-  {
-    front: "Fibroblasten",
-    back: "Cellen die verantwoordelijk zijn voor de productie van collageen en andere extracellulaire matrix componenten"
-  },
-  {
-    front: "Cellen die collageen produceren en essentieel zijn voor wondgenezing",
-    back: "Fibroblasten"
-  },
-  {
-    front: "Inflammatiefase",
-    back: "De eerste fase van wondgenezing, gekenmerkt door ontstekingsreactie en opruiming van beschadigd weefsel"
-  },
-  {
-    front: "Welke fase wordt gekenmerkt door verhoogde doorbloeding, warmte en zwelling?",
-    back: "Inflammatiefase"
-  },
-  {
-    front: "Proliferatiefase",
-    back: "Fase waarin nieuwe cellen worden gevormd en collageen wordt geproduceerd om het weefsel te herstellen"
-  },
-  {
-    front: "In welke fase vindt de aanmaak van nieuw collageen voornamelijk plaats?",
-    back: "Proliferatiefase"
-  },
-  {
-    front: "Remodelleringsfase",
-    back: "Laatste fase van weefselherstel waarin het litteken wordt versterkt en geherorganiseerd"
-  },
-  {
-    front: "Mechanotransductie",
-    back: "Het proces waarbij mechanische belasting wordt omgezet in cellulaire responsen"
-  },
-  {
-    front: "Het proces waarbij mechanische krachten worden omgezet in biologische signalen",
-    back: "Mechanotransductie"
-  },
-  {
-    front: "Proteoglycanen",
-    back: "Moleculen die water vasthouden in de extracellulaire matrix en bijdragen aan de veerkracht van weefsel"
-  },
-  {
-    front: "Matrix Metalloproteinases (MMPs)",
-    back: "Enzymen die betrokken zijn bij de afbraak en hermodellering van de extracellulaire matrix"
-  },
-  {
-    front: "Welke enzymen zijn cruciaal voor de hermodellering van bindweefsel?",
-    back: "Matrix Metalloproteinases (MMPs)"
-  },
-  {
-    front: "Crosslinks",
-    back: "Verbindingen tussen collageenvezels die zorgen voor extra stevigheid van het weefsel"
-  },
-  {
-    front: "Wat zorgt voor de verbinding tussen collageenvezels?",
-    back: "Crosslinks"
-  },
-  {
-    front: "Tensile strength",
-    back: "De maximale spanning die weefsel kan verdragen voordat het scheurt"
-  },
-  {
-    front: "PRICE principe",
-    back: "Protection, Rest, Ice, Compression, Elevation - basisprincipes voor acute blessurebehandeling"
-  },
-  {
-    front: "Wat staat voor Protection, Rest, Ice, Compression, Elevation?",
-    back: "PRICE principe"
-  },
-  {
-    front: "Mechanische belasting die nodig is voor optimaal weefselherstel",
-    back: "Optimale belasting"
-  },
-  {
-    front: "Optimale belasting",
-    back: "De juiste hoeveelheid mechanische stress die weefsel nodig heeft om te herstellen en sterker te worden"
-  }
-];
 
 const questions: Question[] = [
   {
@@ -181,6 +93,9 @@ export default function BindweefselHerstel() {
   const [feedback, setFeedback] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Array of flashcard keys
+  const flashcardKeys = ['collagen', 'fibroblasts'];
+
   const handleFlipCard = () => {
     const now = Date.now();
     if (lastFlipTime && now - lastFlipTime < 3000) {
@@ -238,7 +153,7 @@ export default function BindweefselHerstel() {
           <Link href="/" className="text-white hover:text-gray-200 mb-4 inline-block">
             {t('backToOverview')}
           </Link>
-          <h1 className="text-4xl font-bold mt-4">Bindweefselherstel</h1>
+          <h1 className="text-4xl font-bold mt-4">{t('topics.Bindweefselherstel')}</h1>
         </div>
       </div>
 
@@ -246,11 +161,11 @@ export default function BindweefselHerstel() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex space-x-4 mb-8">
           {[
-            { level: 1, title: t('levels.info') },
-            { level: 2, title: t('levels.practice') },
-            { level: 3, title: t('levels.test') },
-            { level: 4, title: t('levels.cases') },
-            { level: 5, title: t('levels.aiHelp') }
+            { level: 1, title: t('sections.info') },
+            { level: 2, title: t('sections.practice') },
+            { level: 3, title: t('sections.test') },
+            { level: 4, title: t('sections.cases') },
+            { level: 5, title: t('sections.aiHelp') }
           ].map((item) => (
             <button
               key={item.level}
@@ -270,60 +185,53 @@ export default function BindweefselHerstel() {
         {currentLevel === 1 && (
           <div className="max-w-none">
             <article className="prose prose-lg max-w-none">
-              <h2 className="text-2xl font-bold mb-4">Basiskennis Bindweefselherstel</h2>
+              <h2 className="text-2xl font-bold mb-4">{t('content.basicKnowledge')}</h2>
               
               <div className="bg-gray-50 p-6 rounded-lg mb-6">
-                <h3 className="text-xl font-semibold mb-4">Introductie</h3>
-                <p className="mb-4">
-                  Bindweefselherstel is een complex en dynamisch proces dat essentieel is voor het herstel van blessures en de adaptatie van het lichaam aan belasting. Voor fysiotherapeuten is een goed begrip van dit proces cruciaal voor effectieve behandeling.
-                </p>
-                <p className="mb-4">
-                  Het bindweefsel in ons lichaam bestaat voornamelijk uit collageen, elastine en proteoglycanen, geproduceerd door fibroblasten. Deze componenten zorgen samen voor de structurele integriteit en elasticiteit van weefsels zoals pezen, ligamenten en fascie.
-                </p>
+                <h3 className="text-xl font-semibold mb-4">{t('content.introduction')}</h3>
+                <p className="mb-4">{t('content.introText1')}</p>
+                <p className="mb-4">{t('content.introText2')}</p>
               </div>
 
               <div className="bg-gray-50 p-6 rounded-lg mb-6">
-                <h3 className="text-xl font-semibold mb-4">Fasen van Bindweefselherstel</h3>
+                <h3 className="text-xl font-semibold mb-4">{t('content.phases')}</h3>
                 <ol className="list-decimal list-inside space-y-4">
-                  <li className="font-semibold">Inflammatiefase (0-5 dagen)
+                  <li className="font-semibold">{t('contentSections.phases.inflammatory.title')}
                     <div className="font-normal ml-6 mt-2 space-y-2">
-                      <p className="mb-2">De acute ontstekingsreactie waarbij het beschadigde weefsel wordt opgeruimd en ontstekingscellen worden aangetrokken.</p>
+                      <p className="mb-2">{t('contentSections.phases.inflammatory.description')}</p>
                       <ul className="list-disc ml-4 space-y-1">
-                        <li>Verhoogde doorbloeding en vaatpermeabiliteit</li>
-                        <li>Infiltratie van ontstekingscellen (neutrofielen, macrofagen)</li>
-                        <li>Opruiming van beschadigd weefsel</li>
-                        <li>Vrijkomen van groeifactoren en cytokinen</li>
+                        {t('contentSections.phases.inflammatory.points', { returnObjects: true }).map((point, index) => (
+                          <li key={index}>{point}</li>
+                        ))}
                       </ul>
                       <p className="text-sm text-gray-600 mt-2">
-                        Klinische kenmerken: roodheid, warmte, zwelling, pijn en functiebeperking
+                        {t('contentSections.phases.inflammatory.clinical')}
                       </p>
                     </div>
                   </li>
-                  <li className="font-semibold">Proliferatiefase (5-21 dagen)
+                  <li className="font-semibold">{t('contentSections.phases.proliferative.title')}
                     <div className="font-normal ml-6 mt-2 space-y-2">
-                      <p className="mb-2">Vorming van nieuw bindweefsel door fibroblasten die collageen produceren.</p>
+                      <p className="mb-2">{t('contentSections.phases.proliferative.description')}</p>
                       <ul className="list-disc ml-4 space-y-1">
-                        <li>Activatie en proliferatie van fibroblasten</li>
-                        <li>Productie van collageen type III (voorlopig collageen)</li>
-                        <li>Vorming van nieuwe bloedvaten (angiogenese)</li>
-                        <li>Begin van matrix organisatie</li>
+                        {t('contentSections.phases.proliferative.points', { returnObjects: true }).map((point, index) => (
+                          <li key={index}>{point}</li>
+                        ))}
                       </ul>
                       <p className="text-sm text-gray-600 mt-2">
-                        In deze fase is gecontroleerde mechanische belasting essentieel voor optimale weefselorganisatie
+                        {t('contentSections.phases.proliferative.clinical')}
                       </p>
                     </div>
                   </li>
-                  <li className="font-semibold">Remodelleringsfase (21 dagen - 1 jaar)
+                  <li className="font-semibold">{t('contentSections.phases.remodeling.title')}
                     <div className="font-normal ml-6 mt-2 space-y-2">
-                      <p className="mb-2">Reorganisatie en versterking van het nieuwe bindweefsel onder invloed van mechanische belasting.</p>
+                      <p className="mb-2">{t('contentSections.phases.remodeling.description')}</p>
                       <ul className="list-disc ml-4 space-y-1">
-                        <li>Omzetting van collageen type III naar type I</li>
-                        <li>Vorming van crosslinks tussen collageenvezels</li>
-                        <li>Uitlijning van vezels in de belastingsrichting</li>
-                        <li>Optimalisatie van weefselsterkte</li>
+                        {t('contentSections.phases.remodeling.points', { returnObjects: true }).map((point, index) => (
+                          <li key={index}>{point}</li>
+                        ))}
                       </ul>
                       <p className="text-sm text-gray-600 mt-2">
-                        Progressieve belasting is cruciaal voor optimale weefselsterkte en functionaliteit
+                        {t('contentSections.phases.remodeling.clinical')}
                       </p>
                     </div>
                   </li>
@@ -331,74 +239,60 @@ export default function BindweefselHerstel() {
               </div>
 
               <div className="bg-gray-50 p-6 rounded-lg mb-6">
-                <h3 className="text-xl font-semibold mb-4">Mechanotransductie en Belasting</h3>
-                <p className="mb-4">
-                  Mechanotransductie speelt een cruciale rol bij bindweefselherstel. Dit is het proces waarbij mechanische krachten worden omgezet in cellulaire responsen:
-                </p>
+                <h3 className="text-xl font-semibold mb-4">{t('contentSections.mechanotransduction.title')}</h3>
+                <p className="mb-4">{t('contentSections.mechanotransduction.description')}</p>
                 <ul className="list-disc ml-6 space-y-2">
-                  <li>
-                    <span className="font-semibold">Cellulaire respons:</span> Fibroblasten reageren op mechanische prikkels door aanpassing van hun metabolisme en productie van matrix componenten
-                  </li>
-                  <li>
-                    <span className="font-semibold">Optimale belasting:</span> Te weinig belasting leidt tot atrofie, terwijl overbelasting kan resulteren in weefselschade
-                  </li>
-                  <li>
-                    <span className="font-semibold">Progressieve opbouw:</span> Geleidelijke toename van belasting is essentieel voor optimaal herstel en adaptatie
-                  </li>
+                  {t('contentSections.mechanotransduction.points', { returnObjects: true }).map((point, index) => (
+                    <li key={index}>
+                      <span className="font-semibold">{point.title}:</span> {point.description}
+                    </li>
+                  ))}
                 </ul>
               </div>
 
               <div className="bg-gray-50 p-6 rounded-lg mb-6">
-                <h3 className="text-xl font-semibold mb-4">Klinische Implicaties</h3>
+                <h3 className="text-xl font-semibold mb-4">{t('contentSections.clinicalImplications.title')}</h3>
                 <div className="space-y-4">
-                  <p className="mb-4">
-                    Voor optimaal herstel moet de behandeling worden afgestemd op de fase van weefselherstel:
-                  </p>
+                  <p className="mb-4">{t('contentSections.clinicalImplications.description')}</p>
                   <ul className="list-disc ml-6 space-y-2">
-                    <li>
-                      <span className="font-semibold">Acute fase:</span> Bescherming en ontstekingsmodulatie (PRICE-principe)
-                    </li>
-                    <li>
-                      <span className="font-semibold">Subacute fase:</span> Gecontroleerde mobilisatie en progressieve belasting
-                    </li>
-                    <li>
-                      <span className="font-semibold">Remodellering:</span> Functionele training en sport-specifieke oefeningen
-                    </li>
+                    {t('contentSections.clinicalImplications.phases', { returnObjects: true }).map((phase, index) => (
+                      <li key={index}>
+                        <span className="font-semibold">{phase.title}:</span> {phase.description}
+                      </li>
+                    ))}
                   </ul>
-                  <p className="text-sm text-gray-600 mt-4">
-                    Het is essentieel om de belasting aan te passen aan de individuele patient en de specifieke eigenschappen van het aangedane weefsel.
-                  </p>
+                  <p className="text-sm text-gray-600 mt-4">{t('contentSections.clinicalImplications.note')}</p>
                 </div>
               </div>
 
               <div className="bg-gray-50 p-6 rounded-lg mb-6">
-                <h3 className="text-xl font-semibold mb-4">Aanbevolen Bronnen</h3>
+                <h3 className="text-xl font-semibold mb-4">{t('contentSections.recommendedSources.title')}</h3>
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-semibold">De Ontstekingsfase:</h4>
+                    <h4 className="font-semibold">{t('contentSections.recommendedSources.inflammatoryPhase.title')}:</h4>
                     <a href="https://youtu.be/8-x9RKv-bXY?si=TF6L_geJ2XTAgqkA" 
                        className="text-blue-600 hover:underline block ml-4" 
                        target="_blank"
                        rel="noopener noreferrer">
-                      🎥 De Inflammatoire Fase van Weefselherstel (0-5 dagen)
+                      🎥 {t('contentSections.recommendedSources.inflammatoryPhase.link')}
                     </a>
                   </div>
                   <div>
-                    <h4 className="font-semibold">De Proliferatiefase:</h4>
+                    <h4 className="font-semibold">{t('contentSections.recommendedSources.proliferativePhase.title')}:</h4>
                     <a href="https://youtu.be/fWecGdjEuxc?si=ZZUv_s27BvbElx-S" 
                        className="text-blue-600 hover:underline block ml-4" 
                        target="_blank"
                        rel="noopener noreferrer">
-                      🎥 De Proliferatiefase: Opbouw van Nieuw Weefsel (5-21 dagen)
+                      🎥 {t('contentSections.recommendedSources.proliferativePhase.link')}
                     </a>
                   </div>
                   <div>
-                    <h4 className="font-semibold">De Remodelleringsfase:</h4>
+                    <h4 className="font-semibold">{t('contentSections.recommendedSources.remodelingPhase.title')}:</h4>
                     <a href="https://youtu.be/I9jeffyqexg?si=XPv58Jf_ahD5YzC-" 
                        className="text-blue-600 hover:underline block ml-4" 
                        target="_blank"
                        rel="noopener noreferrer">
-                      🎥 De Remodelleringsfase: Versterking en Reorganisatie (21+ dagen)
+                      🎥 {t('contentSections.recommendedSources.remodelingPhase.link')}
                     </a>
                   </div>
                 </div>
@@ -410,7 +304,7 @@ export default function BindweefselHerstel() {
         {/* Level 2 - Flashcards */}
         {currentLevel === 2 && (
           <div className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg">
-            <h2 className="text-2xl font-bold mb-8">{t('levels.practice')}</h2>
+            <h2 className="text-2xl font-bold mb-8">{t('flashcards.title')}</h2>
             
             {/* Warning message */}
             {showFlipWarning && (
@@ -433,13 +327,17 @@ export default function BindweefselHerstel() {
                 {/* Front of card */}
                 <div className="absolute w-full h-full [backface-visibility:hidden]">
                   <div className="bg-gray-50 rounded-lg p-8 h-full flex items-center justify-center text-center shadow-md">
-                    <p className="text-xl font-medium text-gray-800">{flashcards[currentCard].front}</p>
+                    <p className="text-xl font-medium text-gray-800">
+                      {t(`flashcards.cards.${flashcardKeys[currentCard]}.front`)}
+                    </p>
                   </div>
                 </div>
                 {/* Back of card */}
                 <div className="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]">
                   <div className="bg-[#e6007e] text-white rounded-lg p-8 h-full flex items-center justify-center text-center shadow-md">
-                    <p className="text-xl">{flashcards[currentCard].back}</p>
+                    <p className="text-xl">
+                      {t(`flashcards.cards.${flashcardKeys[currentCard]}.back`)}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -449,7 +347,7 @@ export default function BindweefselHerstel() {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setCurrentCard((prev) => (prev === 0 ? flashcards.length - 1 : prev - 1));
+                  setCurrentCard((prev) => (prev === 0 ? flashcardKeys.length - 1 : prev - 1));
                   setIsFlipped(false);
                   setLastFlipTime(null);
                 }}
@@ -458,12 +356,12 @@ export default function BindweefselHerstel() {
                 {t('previous')}
               </button>
               <span className="text-gray-600 font-medium">
-                {currentCard + 1} / {flashcards.length}
+                {currentCard + 1} / {flashcardKeys.length}
               </span>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setCurrentCard((prev) => (prev === flashcards.length - 1 ? 0 : prev + 1));
+                  setCurrentCard((prev) => (prev === flashcardKeys.length - 1 ? 0 : prev + 1));
                   setIsFlipped(false);
                   setLastFlipTime(null);
                 }}
@@ -478,16 +376,18 @@ export default function BindweefselHerstel() {
         {/* Level 3 - Explanation Exercise */}
         {currentLevel === 3 && (
           <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-lg">
-            <h2 className="text-2xl font-bold mb-8 text-gray-900">Uitleg Oefening</h2>
+            <h2 className="text-2xl font-bold mb-8 text-gray-900">{t('questions.title')}</h2>
             <div className="space-y-6">
               <div className="bg-gray-50 p-6 rounded-lg">
                 <h3 className="text-xl font-semibold mb-4 text-gray-900">
-                  Beantwoord de volgende vraag:
+                  {t('questions.title')}:
                 </h3>
                 <div className="p-4 border border-gray-200 rounded-lg bg-white">
-                  <p className="font-semibold text-gray-900">{questions[currentQuestion].title}</p>
+                  <p className="font-semibold text-gray-900">
+                    {t('questions.list', { returnObjects: true })[currentQuestion].title}
+                  </p>
                   <p className="text-base mt-2 text-gray-700">
-                    {questions[currentQuestion].description}
+                    {t('questions.list', { returnObjects: true })[currentQuestion].description}
                   </p>
                 </div>
               </div>
@@ -495,33 +395,33 @@ export default function BindweefselHerstel() {
               <div className="space-y-4">
                 <textarea
                   className="w-full h-48 p-4 border rounded-lg focus:ring-2 focus:ring-[#e6007e] focus:border-transparent resize-none bg-white text-gray-900 text-lg"
-                  placeholder="Type je uitleg hier..."
+                  placeholder={t('questions.answerPlaceholder')}
                   value={userExplanation}
                   onChange={(e) => setUserExplanation(e.target.value)}
                 />
                 <div className="flex justify-between items-center">
                   <button
                     onClick={() => {
-                      setCurrentQuestion((prev) => (prev === 0 ? questions.length - 1 : prev - 1));
+                      setCurrentQuestion((prev) => (prev === 0 ? t('questions.list', { returnObjects: true }).length - 1 : prev - 1));
                       setUserExplanation('');
                       setFeedback('');
                     }}
                     className="px-6 py-3 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors"
                   >
-                    ← Vorige
+                    {t('previous')}
                   </button>
                   <span className="text-gray-500">
-                    {currentQuestion + 1} / {questions.length}
+                    {currentQuestion + 1} / {t('questions.list', { returnObjects: true }).length}
                   </span>
                   <button
                     onClick={() => {
-                      setCurrentQuestion((prev) => (prev === questions.length - 1 ? 0 : prev + 1));
+                      setCurrentQuestion((prev) => (prev === t('questions.list', { returnObjects: true }).length - 1 ? 0 : prev + 1));
                       setUserExplanation('');
                       setFeedback('');
                     }}
                     className="px-6 py-3 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors"
                   >
-                    Volgende →
+                    {t('next')}
                   </button>
                 </div>
                 <button 
@@ -533,7 +433,7 @@ export default function BindweefselHerstel() {
                   onClick={checkAnswer}
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Bezig met controleren...' : 'Controleer Antwoord'}
+                  {isLoading ? t('checking') : t('checkAnswer')}
                 </button>
 
                 {feedback && (
