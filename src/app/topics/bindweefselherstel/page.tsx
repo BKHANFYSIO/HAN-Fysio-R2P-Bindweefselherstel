@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface FlashCard {
   front: string;
@@ -166,6 +167,7 @@ const caseStudies: CaseStudy[] = [
 ];
 
 export default function BindweefselHerstel() {
+  const { t } = useLanguage();
   const [currentLevel, setCurrentLevel] = useState(1);
   const [currentCard, setCurrentCard] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -253,7 +255,7 @@ export default function BindweefselHerstel() {
       <div className="bg-[#e6007e] text-white py-6">
         <div className="max-w-7xl mx-auto px-4">
           <Link href="/" className="text-white hover:text-gray-200 mb-4 inline-block">
-            ← Terug naar overzicht
+            {t('backToOverview')}
           </Link>
           <h1 className="text-4xl font-bold mt-4">Bindweefselherstel</h1>
         </div>
@@ -263,10 +265,11 @@ export default function BindweefselHerstel() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex space-x-4 mb-8">
           {[
-            { level: 1, title: "Informatie & Bronnen" },
-            { level: 2, title: "Begrippen Oefenen" },
-            { level: 3, title: "Inzicht Toetsen" },
-            { level: 4, title: "Praktijkcasussen" }
+            { level: 1, title: t('levels.info') },
+            { level: 2, title: t('levels.practice') },
+            { level: 3, title: t('levels.test') },
+            { level: 4, title: t('levels.cases') },
+            { level: 5, title: t('levels.aiHelp') }
           ].map((item) => (
             <button
               key={item.level}
@@ -426,19 +429,20 @@ export default function BindweefselHerstel() {
         {/* Level 2 - Flashcards */}
         {currentLevel === 2 && (
           <div className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg">
-            <h2 className="text-2xl font-bold mb-8">Flashcards</h2>
+            <h2 className="text-2xl font-bold mb-8">{t('levels.practice')}</h2>
             
             {/* Timer and warning message */}
             <div className="mb-4 text-center">
               {!canFlip && (
                 <div className="text-gray-600 font-medium">
-                  Wacht nog {timeLeft} seconden voordat je de kaart omdraait...
+                  {t('flashcards.waitMessage').replace('{seconds}', timeLeft.toString())}
                 </div>
               )}
               {showFlipWarning && (
                 <div className="bg-amber-100 border border-amber-200 text-amber-800 px-4 py-2 rounded-lg mt-2">
-                  Probeer eerst zelf het antwoord te herinneren! Dit helpt je om de informatie beter te onthouden.
-                  Het aanleggen van nieuwe verbindingen in je geheugen kost wat meer moeite, maar leidt tot beter en langduriger leren.
+                  {t('flashcards.warningMessage')}
+                  <br />
+                  {t('flashcards.learningTip')}
                 </div>
               )}
             </div>
@@ -473,7 +477,7 @@ export default function BindweefselHerstel() {
                 }}
                 className="px-6 py-3 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors"
               >
-                ← Vorige
+                {t('previous')}
               </button>
               <span className="text-gray-600 font-medium">
                 {currentCard + 1} / {flashcards.length}
@@ -485,7 +489,7 @@ export default function BindweefselHerstel() {
                 }}
                 className="px-6 py-3 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors"
               >
-                Volgende →
+                {t('next')}
               </button>
             </div>
           </div>
@@ -570,16 +574,20 @@ export default function BindweefselHerstel() {
         {/* Level 4 - Case Studies */}
         {currentLevel === 4 && (
           <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-lg">
-            <h2 className="text-2xl font-bold mb-8">Praktijkcasus</h2>
+            <h2 className="text-2xl font-bold mb-8">{t('caseStudies.title')}</h2>
             <div className="space-y-6">
               <div className="bg-gray-50 p-6 rounded-lg">
-                <h3 className="text-xl font-semibold mb-4">Casus {currentCase + 1}</h3>
-                <p className="text-gray-700 mb-6">
-                  {caseStudies[currentCase].context}
-                </p>
-                <p className="font-semibold mb-4">
-                  {caseStudies[currentCase].question}
-                </p>
+                <h3 className="text-xl font-semibold mb-4">{t('caseStudies.case')} {currentCase + 1}</h3>
+                <div className="space-y-4">
+                  <div className="bg-white p-4 rounded-lg">
+                    <p className="text-gray-700 mb-4 whitespace-normal">
+                      {caseStudies[currentCase].context}
+                    </p>
+                    <p className="font-semibold text-gray-900 whitespace-normal">
+                      {caseStudies[currentCase].question}
+                    </p>
+                  </div>
+                </div>
               </div>
               
               <div className="space-y-4">
@@ -602,7 +610,7 @@ export default function BindweefselHerstel() {
                           disabled={showExplanation}
                           className="w-5 h-5 text-[#e6007e] border-gray-300 focus:ring-[#e6007e]" 
                         />
-                        <span className="ml-3 text-lg text-gray-700">{option}</span>
+                        <span className="ml-3 text-lg text-gray-700 whitespace-normal">{option}</span>
                       </div>
                     </label>
                   ))}
@@ -643,12 +651,12 @@ export default function BindweefselHerstel() {
                   onClick={checkCaseAnswer}
                   disabled={showExplanation}
                 >
-                  {showExplanation ? 'Antwoord gecontroleerd' : 'Controleer Antwoord'}
+                  {showExplanation ? t('answerChecked') : t('checkAnswer')}
                 </button>
 
                 {showExplanation && (
                   <div className="mt-6 bg-gray-50 p-6 rounded-lg">
-                    <h4 className="text-lg font-semibold mb-3">Uitleg:</h4>
+                    <h4 className="text-lg font-semibold mb-3">{t('caseStudies.explanation')}</h4>
                     <div className="prose prose-lg">
                       {caseStudies[currentCase].explanation.split('\n').map((line, index) => (
                         <p key={index} className="mb-2">{line}</p>
@@ -656,6 +664,152 @@ export default function BindweefselHerstel() {
                     </div>
                   </div>
                 )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Level 5 - AI Chat Options */}
+        {currentLevel === 5 && (
+          <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+            <h2 className="text-2xl font-bold mb-8">{t('aiHelp.title')}</h2>
+            <div className="space-y-6">
+              <div className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="text-xl font-semibold mb-4">{t('aiHelp.chooseAssistant')}</h3>
+                <p className="text-gray-700 mb-6">
+                  {t('aiHelp.description')}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* ChatGPT Link */}
+                <a 
+                  href={`https://chat.openai.com/?q=${encodeURIComponent(
+                    "Ik ben student fysiotherapie en wil graag meer leren over bindweefselherstel. Jij bent een ervaren docent fysiotherapie met expertise in weefselherstel en regeneratie.\n\n" +
+                    "Begeleid me alsjeblieft op een Socratische manier door:\n" +
+                    "1. Vragen te stellen die me uitdagen dieper na te denken\n" +
+                    "2. Me zelf verbanden te laten leggen tussen concepten\n" +
+                    "3. Alleen hints te geven als ik vastloop\n" +
+                    "4. Door te vragen bij oppervlakkige antwoorden\n" +
+                    "5. Me uit te dagen met praktijkvoorbeelden\n\n" +
+                    "Na elke 10-15 minuten gesprek:\n" +
+                    "- Vat samen wat we besproken hebben\n" +
+                    "- Test mijn begrip met 2-3 multiple choice vragen\n" +
+                    "- Stel een open vraag die verschillende concepten verbindt\n\n" +
+                    "Begin met een open vraag over wat ik al weet van bindweefselherstel."
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block p-6 bg-[#74AA9C] text-white rounded-lg hover:bg-opacity-90 transition-all transform hover:-translate-y-1"
+                >
+                  <h4 className="text-xl font-semibold mb-2">ChatGPT</h4>
+                  <p className="mb-4">Direct starten met vooraf ingestelde prompt</p>
+                  <div className="text-sm opacity-75">
+                    Klik om ChatGPT te openen met een gespecialiseerde prompt voor bindweefselherstel
+                  </div>
+                </a>
+
+                {/* Claude Link */}
+                <div className="block p-6 bg-[#6B4F9E] text-white rounded-lg">
+                  <h4 className="text-xl font-semibold mb-2">Claude</h4>
+                  <p className="mb-4">Kopieer de prompt en start Claude</p>
+                  <div className="flex flex-col space-y-4">
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(
+                          "Ik ben student fysiotherapie en wil graag meer leren over bindweefselherstel. Jij bent een ervaren docent fysiotherapie met expertise in weefselherstel en regeneratie.\n\n" +
+                          "Begeleid me alsjeblieft op een Socratische manier door:\n" +
+                          "1. Vragen te stellen die me uitdagen dieper na te denken\n" +
+                          "2. Me zelf verbanden te laten leggen tussen concepten\n" +
+                          "3. Alleen hints te geven als ik vastloop\n" +
+                          "4. Door te vragen bij oppervlakkige antwoorden\n" +
+                          "5. Me uit te dagen met praktijkvoorbeelden\n\n" +
+                          "Na elke 10-15 minuten gesprek:\n" +
+                          "- Vat samen wat we besproken hebben\n" +
+                          "- Test mijn begrip met 2-3 multiple choice vragen\n" +
+                          "- Stel een open vraag die verschillende concepten verbindt\n\n" +
+                          "Begin met een open vraag over wat ik al weet van bindweefselherstel."
+                        );
+                        alert('Prompt gekopieerd! Plak deze in Claude na het openen van de link.');
+                      }}
+                      className="flex items-center justify-center space-x-2 bg-white text-[#6B4F9E] px-4 py-2 rounded hover:bg-opacity-90"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+                        <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+                      </svg>
+                      <span>Kopieer Prompt</span>
+                    </button>
+                    <a 
+                      href="https://claude.ai/chats"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center space-x-2 bg-white/20 px-4 py-2 rounded hover:bg-white/30"
+                    >
+                      <span>Open Claude</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+                        <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+
+                {/* Gemini Link */}
+                <div className="block p-6 bg-[#1A73E8] text-white rounded-lg">
+                  <h4 className="text-xl font-semibold mb-2">Gemini</h4>
+                  <p className="mb-4">Kopieer de prompt en start Gemini</p>
+                  <div className="flex flex-col space-y-4">
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(
+                          "Ik ben student fysiotherapie en wil graag meer leren over bindweefselherstel. Jij bent een ervaren docent fysiotherapie met expertise in weefselherstel en regeneratie.\n\n" +
+                          "Begeleid me alsjeblieft op een Socratische manier door:\n" +
+                          "1. Vragen te stellen die me uitdagen dieper na te denken\n" +
+                          "2. Me zelf verbanden te laten leggen tussen concepten\n" +
+                          "3. Alleen hints te geven als ik vastloop\n" +
+                          "4. Door te vragen bij oppervlakkige antwoorden\n" +
+                          "5. Me uit te dagen met praktijkvoorbeelden\n\n" +
+                          "Na elke 10-15 minuten gesprek:\n" +
+                          "- Vat samen wat we besproken hebben\n" +
+                          "- Test mijn begrip met 2-3 multiple choice vragen\n" +
+                          "- Stel een open vraag die verschillende concepten verbindt\n\n" +
+                          "Begin met een open vraag over wat ik al weet van bindweefselherstel."
+                        );
+                        alert('Prompt gekopieerd! Plak deze in Gemini na het openen van de link.');
+                      }}
+                      className="flex items-center justify-center space-x-2 bg-white text-[#1A73E8] px-4 py-2 rounded hover:bg-opacity-90"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+                        <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+                      </svg>
+                      <span>Kopieer Prompt</span>
+                    </button>
+                    <a 
+                      href="https://gemini.google.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center space-x-2 bg-white/20 px-4 py-2 rounded hover:bg-white/30"
+                    >
+                      <span>Open Gemini</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+                        <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 p-6 bg-gray-50 rounded-lg">
+                <h4 className="text-lg font-semibold mb-3">Instructies voor Claude en Gemini:</h4>
+                <ol className="list-decimal list-inside space-y-2 text-gray-700">
+                  <li>Klik op de "Kopieer Prompt" knop om de gespecialiseerde prompt te kopiëren</li>
+                  <li>Klik op de "Open" knop om de chatbot in een nieuw tabblad te openen</li>
+                  <li>Plak de gekopieerde prompt in het chatvenster</li>
+                  <li>Start je leergesprek met de AI-docent</li>
+                </ol>
               </div>
             </div>
           </div>

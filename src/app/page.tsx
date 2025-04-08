@@ -1,6 +1,9 @@
 import Link from "next/link";
+import { useLanguage } from './contexts/LanguageContext';
 
 export default function Home() {
+  const { t } = useLanguage();
+  
   const learningTopics = [
     {
       title: "Bindweefselherstel",
@@ -91,14 +94,14 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/30" />
         <div className="relative z-10 h-full flex flex-col justify-center items-center p-8 text-center">
           <h1 className="text-5xl md:text-7xl font-bold mb-4">
-            Return-2-Performance
+            {t('homepage.title')}
           </h1>
           <p className="text-2xl md:text-3xl font-light mb-8 max-w-3xl">
-            Verdiep je kennis in het herstelproces van bindweefsel en de factoren die hierbij een rol spelen
+            {t('homepage.subtitle')}
           </p>
           <div className="flex flex-col items-center space-y-4">
             <span className="text-sm text-gray-200">
-              Een module van HAN Fysiotherapie
+              {t('homepage.moduleInfo')}
             </span>
           </div>
         </div>
@@ -106,7 +109,7 @@ export default function Home() {
 
       {/* Topics Grid */}
       <div className="max-w-7xl mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-center mb-12">Beschikbare Onderwerpen</h2>
+        <h2 className="text-3xl font-bold text-center mb-12">{t('homepage.topicsTitle')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {learningTopics.map((topic, index) => (
             topic.title === "Bindweefselherstel" ? (
@@ -134,7 +137,7 @@ export default function Home() {
                 </div>
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/5 rounded-xl">
                   <span className="bg-gray-800 text-white px-4 py-2 rounded-full text-sm">
-                    Binnenkort beschikbaar
+                    {t('homepage.comingSoon')}
                   </span>
                 </div>
               </div>
